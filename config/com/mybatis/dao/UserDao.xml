@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.dao.UserDao">
+	<resultMap type="user" id="userProxy">
+		<!-- id：表示主键的映射，javabean的唯一标识映射 column：数据库查询列名 property:javabean的属性，表示包列名的值映射javabean那个属性上 -->
+		<id column="_id" property="id" />
+
+		<result column="_name" property="name" />
+		<result column="_age" property="age" />
+		<result column="_address" property="address" />
+	</resultMap>
+	<select id="findAll" resultType="user">
+		SELECT * FROM USER
+	</select>
+
+	<select id="findUserByID" resultType="com.mybatis.pojo.User"
+		parameterType="int">
+		SELECT * FROM USER WHERE ID = #{id}
+		<!-- SELECT * FROM USER WHERE ID = ${value} -->
+	</select>
+
+	<select id="findUserByName" resultType="com.mybatis.pojo.User"
+		parameterType="string">
+		SELECT * FROM USER WHERE name like '%${value}%'
+	</select>
+
+	<insert id="insertUser" parameterType="com.mybatis.pojo.User">
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			select
+			last_insert_id()
+		</selectKey>
+		INSERT INTO USER VALUES(#{id},#{name},#{age},#{address})
+	</insert>
+
+	<insert id="insertUser2" parameterType="com.mybatis.pojo.User"
+		keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO USER
+		VALUES(#{id},#{name},#{age},#{address})
+	</insert>
+
+	<update id="updateUser" parameterType="com.mybatis.pojo.User">
+		UPDATE USER SET NAME =
+		#{name} ,AGE = #{age},ADDRESS=#{address} WHERE ID
+		=#{id}
+	</update>
+
+	<select id="findUserByVague" parameterType="map" resultType="user">
+		SELECT * FROM user WHERE name = #{name} AND age = #{age} AND address =
+		#{address}
+	</select>
+
+	<select id="findUserByNum" parameterType="user" resultType="int">
+		SELECT COUNT(1) FROM user WHERE name LIKE '%${name}%' AND age = #{age}
+	</select>
+
+	<select id="findUserByProxy" parameterType="user" resultMap="userProxy">
+		SELECT id _id,name _name,age _age,address _address FROM user
+		<where>
+			<if test="name!=null and name!= ''">name like #{name}</if>
+			<if test="age!=null and age!=''">AND age = #{age}</if>
+			<if test="address!=null and address!=''">AND address=#{address}</if>
+		</where>
+		<!-- WHERE name like #{name} AND age = #{age} AND address = #{address} -->
+	</select>
+</mapper>

@@ -3,7 +3,14 @@
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+	<!-- 引入资源文件 -->
 	<properties resource="db.properties" />
+	<!--mybatis的typeAliases支持定义别名， typeAliases可以定义多个typeAlias -->
+	<typeAliases>
+		<!-- <typeAlias alias="user" type="com.mybatis.pojo.User"/> -->
+		<!-- 使用package批量定义别名：name写包名，批量扫描包路径下的所有的类，这些类都被自动定义了别名 别名就是类名，大小写都可 -->
+		<package name="com.mybatis.pojo" />
+	</typeAliases>
 	<environments default="development">
 		<environment id="development">
 			<!-- JDBC事务 -->
@@ -17,7 +24,11 @@
 		</environment>
 	</environments>
 	<mappers>
+		<!-- 使用class的方式进行扫描接口：代理开发模式这里也可配置多个Mapper -->
+		<!-- <mapper class="com.mybatis.dao.UserDao"/> -->
 		<mapper resource="User.xml" />
-		<mapper resource="UserDao.xml" />
+		<!-- <mapper resource="UserDao.xml" /> -->
+		<!-- mapper代理开发：批量扫描接口使用package,name填写接口包路径 包路径下面所有接口都被代理 -->
+		<package name="com.mybatis.dao" />
 	</mappers>
 </configuration>
